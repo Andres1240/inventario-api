@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const db = require("./config/db");
 const productoRoutes = require("./routes/productos");
+const categoriaRoutes = require("./routes/categorias");
+
 
 const app = express();
 
@@ -9,6 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api", productoRoutes);
+app.use("/api", categoriaRoutes);
 
 app.get("/", (req, res) => {
     res.send("API de Inventario funcionando");

@@ -6,9 +6,12 @@ const obtenerProductos = async () => {
             p.Nombre_product,
             p.unid_product,
             p.valor_unit,
-            c.Descrip_Cat
+            p.cant_min,
+            p.cant_max,
+            p.stock,
+            c.Nombre_Categ
         FROM Producto p
-        JOIN Categoria c
+        JOIN Categoria c 
         ON p.Catego_Co_Categ = c.Co_Categ
     `);
 
@@ -18,19 +21,13 @@ const obtenerProductos = async () => {
 
 const crearProducto = async (producto) => {
 
-    const [result] = await db.promise().query(
-        `INSERT INTO Producto
-        (Nombre_product, unid_product, valor_unit, cant_min, cant_max, Catego_Co_Categ)
-        VALUES (?, ?, ?, ?, ?, ?)`,
-        [
-            producto.nombre,
-            producto.unidades,
-            producto.valor,
-            producto.min,
-            producto.max,
-            producto.categoria
-        ]
-    );
+    const { nombre, unidad, valorUnitario, cantMin, cantMax, categoria, stock } = producto;
+
+    const [result] = await db.promise().query(`
+        INSERT INTO Producto
+        (Nombre_product, unid_product, valor_unit, cant_min, cant_max, Catego_Co_Categ, stock)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    `, [nombre, unidad, valorUnitario, cantMin, cantMax, categoria, stock]);
 
     return result;
 
@@ -38,20 +35,20 @@ const crearProducto = async (producto) => {
 
 const actualizarProducto = async (id, producto) => {
 
-    const [result] = await db.promise().query(
-        `UPDATE Producto
-        SET Nombre_product=?, unid_product=?, valor_unit=?, cant_min=?, cant_max=?, Catego_Co_Categ=?
-        WHERE Co_Product=?`,
-        [
-            producto.nombre,
-            producto.unidades,
-            producto.valor,
-            producto.min,
-            producto.max,
-            producto.categoria,
-            id
-        ]
-    );
+    const { nombre, unidad, valorUnitario, cantMin, cantMax, categoria, stock } = producto;
+
+    const [result] = await db.promise().query(`
+        UPDATE Producto
+        SET 
+            Nombre_product = ?,
+            unid_product = ?,
+            valor_unit = ?,
+            cant_min = ?,
+            cant_max = ?,
+            Catego_Co_Categ = ?,
+            stock = ?
+        WHERE Co_Product = ?
+    `, [nombre, unidad, valorUnitario, cantMin, cantMax, categoria, stock, id]);
 
     return result;
 

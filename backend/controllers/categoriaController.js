@@ -2,20 +2,33 @@ const categoriaService = require("../services/categoriaService");
 
 const listarCategorias = async (req, res) => {
 
-    const categorias = await categoriaService.obtenerCategorias();
+    try {
 
-    res.json(categorias);
+        const categorias = await categoriaService.obtenerCategorias();
+
+        res.json(categorias);
+
+    } catch (error) {
+
+        res.status(500).json({ error: "Error al obtener categorias" });
+
+    }
 
 };
 
 const crearCategoria = async (req, res) => {
 
-    const resultado = await categoriaService.crearCategoria(req.body);
+    try {
 
-    res.json({
-        mensaje: "Categoría creada",
-        resultado
-    });
+        const result = await categoriaService.crearCategoria(req.body);
+
+        res.json(result);
+
+    } catch (error) {
+
+        res.status(500).json({ error: "Error al crear categoria" });
+
+    }
 
 };
 

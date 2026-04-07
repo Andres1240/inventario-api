@@ -7,6 +7,8 @@ const categoriaRoutes = require("./routes/categorias");
 const facturaRoutes = require("./routes/facturas");
 const permisosRoutes = require("./routes/permisos");
 const usuarioRoutes = require("./routes/usuarios");
+const clienteRoutes = require("./routes/clientes");
+const proveedorRoutes = require("./routes/proveedores");
 
 const app = express();
 
@@ -18,6 +20,8 @@ app.use("/api", categoriaRoutes);
 app.use("/api", facturaRoutes);
 app.use("/api", usuarioRoutes);
 app.use("/api", permisosRoutes);
+app.use("/api", clienteRoutes);
+app.use("/api", proveedorRoutes);
 
 
 app.get("/", (req, res) => {

@@ -9,6 +9,7 @@ const permisosRoutes = require("./routes/permisos");
 const usuarioRoutes = require("./routes/usuarios");
 const clienteRoutes = require("./routes/clientes");
 const proveedorRoutes = require("./routes/proveedores");
+const zonaRoutes = require("./routes/zonas");
 
 const app = express();
 
@@ -22,7 +23,7 @@ app.use("/api", usuarioRoutes);
 app.use("/api", permisosRoutes);
 app.use("/api", clienteRoutes);
 app.use("/api", proveedorRoutes);
-
+app.use("/api", zonaRoutes);
 
 app.get("/", (req, res) => {
     res.send("API de Inventario funcionando");

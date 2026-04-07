@@ -9,33 +9,64 @@ const obtenerProductos = async () => {
             p.cant_min,
             p.cant_max,
             p.stock,
-            c.Nombre_Categ
+            c.Descrip_categ,
+            z.Descrip_Zona
         FROM Producto p
-        JOIN Categoria c 
+        LEFT JOIN Categoria c
         ON p.Catego_Co_Categ = c.Co_Categ
+        LEFT JOIN Zonas z
+        ON p.Zona_Co_Zona = z.Co_Zona
     `);
 
     return rows;
-
 };
+
+const db = require("../config/db");
 
 const crearProducto = async (producto) => {
 
-    const { nombre, unidad, valorUnitario, cantMin, cantMax, categoria, stock } = producto;
+    const {
+        nombre,
+        unidad,
+        valor_unit,
+        cant_min,
+        cant_max,
+        categoria,
+        stock,
+        zona
+    } = producto;
 
     const [result] = await db.promise().query(`
         INSERT INTO Producto
-        (Nombre_product, unid_product, valor_unit, cant_min, cant_max, Catego_Co_Categ, stock)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    `, [nombre, unidad, valorUnitario, cantMin, cantMax, categoria, stock]);
+        (
+            Nombre_product,
+            unid_product,
+            valor_unit,
+            cant_min,
+            cant_max,
+            Catego_Co_Categ,
+            stock,
+            Zona_Co_Zona
+        )
+        VALUES (?,?,?,?,?,?,?,?)
+    `,
+    [
+        nombre,
+        unidad,
+        valor_unit,
+        cant_min,
+        cant_max,
+        categoria,
+        stock,
+        zona
+    ]);
 
     return result;
-
 };
 
 const actualizarProducto = async (id, producto) => {
 
-    const { nombre, unidad, valorUnitario, cantMin, cantMax, categoria, stock } = producto;
+    const { nombre, unidad, valorUnitario, cantMin, cantMax, categoria, stock, zona } = producto;
 
     const [result] = await db.promise().query(`
         UPDATE Producto
@@ -46,9 +77,10 @@ const actualizarProducto = async (id, producto) => {
             cant_min = ?,
             cant_max = ?,
             Catego_Co_Categ = ?,
-            stock = ?
+            stock = ?,
+            Zona_Co_Zona = ?
         WHERE Co_Product = ?
-    `, [nombre, unidad, valorUnitario, cantMin, cantMax, categoria, stock, id]);
+    `, [nombre, unidad, valorUnitario, cantMin, cantMax, categoria, stock, zona, id]);
 
     return result;
 

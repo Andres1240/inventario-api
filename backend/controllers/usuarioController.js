@@ -24,7 +24,10 @@ const crearUsuario = async (req, res) => {
 
         const result = await usuarioService.crearUsuario(req.body);
 
-        res.json(result);
+        res.json({
+            mensaje: "Usuario creado correctamente",
+            id: result.insertId
+        });
 
     } catch (error) {
 
@@ -42,11 +45,12 @@ const login = async (req, res) => {
 
         const { usuario, password } = req.body;
 
-        const token = await usuarioService.loginUsuario(usuario, password);
+        const data = await usuarioService.loginUsuario(usuario, password);
 
         res.json({
             mensaje: "Login exitoso",
-            token: token
+            token: data.token,
+            usuario: data.usuario
         });
 
     } catch (error) {

@@ -2,11 +2,19 @@ const jwt = require("jsonwebtoken");
 
 const verificarToken = (req, res, next) => {
 
-    const token = req.headers["authorization"];
+    const authHeader = req.headers["authorization"];
+
+    if (!authHeader) {
+        return res.status(403).json({
+            error: "Token requerido"
+        });
+    }
+
+    const token = authHeader.split(" ")[1]; // Bearer TOKEN
 
     if (!token) {
         return res.status(403).json({
-            error: "Token requerido"
+            error: "Token inválido"
         });
     }
 

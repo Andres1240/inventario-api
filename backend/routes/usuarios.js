@@ -6,6 +6,8 @@ const usuarioController = require("../controllers/usuarioController");
 const verificarToken = require("../middleware/authMiddleware");
 const verificarRol = require("../middleware/rolMiddleware");
 
+router.post("/login", usuarioController.login);
+
 router.get(
     "/usuarios",
     verificarToken,

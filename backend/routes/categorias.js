@@ -3,8 +3,22 @@ const router = express.Router();
 
 const categoriaController = require("../controllers/categoriaController");
 
-router.get("/categorias", categoriaController.listarCategorias);
+const verificarToken = require("../middleware/authMiddleware");
+const verificarRol = require("../middleware/rolMiddleware");
 
-router.post("/categorias", categoriaController.crearCategoria);
+// Listar categorías (usuarios autenticados)
+router.get(
+    "/categorias",
+    verificarToken,
+    categoriaController.listarCategorias
+);
+
+// Crear categoría (solo admin)
+router.post(
+    "/categorias",
+    verificarToken,
+    verificarRol([1]),
+    categoriaController.crearCategoria
+);
 
 module.exports = router;

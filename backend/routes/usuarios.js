@@ -22,4 +22,12 @@ router.post(
     usuarioController.crearUsuario
 );
 
+router.get(
+    "/me",
+    verificarToken,
+    (req, res) => {
+        res.json(req.usuario);
+    }
+);
+
 module.exports = router;

@@ -3,8 +3,22 @@ const router = express.Router();
 
 const zonaController = require("../controllers/zonaController");
 
-router.get("/zonas", zonaController.listarZonas);
+const verificarToken = require("../middleware/authMiddleware");
+const verificarRol = require("../middleware/rolMiddleware");
 
-router.post("/zonas", zonaController.crearZona);
+// Listar zonas (usuarios autenticados)
+router.get(
+    "/zonas",
+    verificarToken,
+    zonaController.listarZonas
+);
+
+// Crear zona (solo admin)
+router.post(
+    "/zonas",
+    verificarToken,
+    verificarRol([1]),
+    zonaController.crearZona
+);
 
 module.exports = router;

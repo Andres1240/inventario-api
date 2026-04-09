@@ -3,8 +3,23 @@ const router = express.Router();
 
 const proveedorController = require("../controllers/proveedorController");
 
-router.get("/proveedores", proveedorController.listarProveedores);
+const verificarToken = require("../middleware/authMiddleware");
+const verificarRol = require("../middleware/rolMiddleware");
 
-router.post("/proveedores", proveedorController.crearProveedor);
+// Listar proveedores (solo Admin)
+router.get(
+    "/proveedores",
+    verificarToken,
+    verificarRol([1]),
+    proveedorController.listarProveedores
+);
+
+// Crear proveedor (solo Admin)
+router.post(
+    "/proveedores",
+    verificarToken,
+    verificarRol([1]),
+    proveedorController.crearProveedor
+);
 
 module.exports = router;

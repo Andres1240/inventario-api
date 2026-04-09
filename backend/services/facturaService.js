@@ -8,14 +8,39 @@ const registrarFactura = async (data) => {
 
         await connection.beginTransaction();
 
-        let totalFactura = 0;
-
-        // calcular total
-        for (const item of data.productos) {
-            totalFactura += item.cantidad * item.precio;
+        if (!data.productos || data.productos.length === 0) {
+            throw new Error("La factura debe tener productos");
         }
 
-        // insertar factura con total
+        let totalFactura = 0;
+
+        const fecha = new Date();
+
+        // calcular total y validar
+        for (const item of data.productos) {
+
+            if (item.cantidad <= 0) {
+                throw new Error("Cantidad inválida");
+            }
+
+            const [producto] = await connection.query(
+                "SELECT stock, valor_unit FROM Producto WHERE Co_Product = ?",
+                [item.producto]
+            );
+
+            if (producto.length === 0) {
+                throw new Error(`Producto ${item.producto} no existe`);
+            }
+
+            if (producto[0].stock < item.cantidad) {
+                throw new Error("Stock insuficiente");
+            }
+
+            const precio = producto[0].valor_unit;
+            totalFactura += item.cantidad * precio;
+        }
+
+        // insertar factura
         const [factura] = await connection.query(
             `INSERT INTO Factura
             (Num_Factura, Cliente_Client_id, Usuario_ID, Fecha_Fact, Total)
@@ -24,26 +49,23 @@ const registrarFactura = async (data) => {
                 data.numFactura,
                 data.cliente,
                 data.usuario,
-                data.fecha,
+                fecha,
                 totalFactura
             ]
         );
 
         const facturaId = factura.insertId;
 
-        // registrar detalles
+        // insertar detalle y actualizar stock
         for (const item of data.productos) {
 
             const [producto] = await connection.query(
-                "SELECT stock FROM Producto WHERE Co_Product = ?",
+                "SELECT valor_unit FROM Producto WHERE Co_Product = ?",
                 [item.producto]
             );
 
-            if (producto[0].stock < item.cantidad) {
-                throw new Error("Stock insuficiente");
-            }
-
-            const subtotal = item.cantidad * item.precio;
+            const precio = producto[0].valor_unit;
+            const subtotal = item.cantidad * precio;
 
             await connection.query(
                 `INSERT INTO Detalle
@@ -53,12 +75,11 @@ const registrarFactura = async (data) => {
                     facturaId,
                     item.producto,
                     item.cantidad,
-                    item.precio,
+                    precio,
                     subtotal
                 ]
             );
 
-            // actualizar inventario
             await connection.query(
                 `UPDATE Producto
                 SET stock = stock - ?
@@ -68,7 +89,6 @@ const registrarFactura = async (data) => {
                     item.producto
                 ]
             );
-
         }
 
         await connection.commit();
@@ -88,7 +108,6 @@ const registrarFactura = async (data) => {
         connection.release();
 
     }
-
 };
 
 const obtenerFacturas = async () => {

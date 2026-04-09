@@ -3,12 +3,39 @@ const router = express.Router();
 
 const facturaController = require("../controllers/facturaController");
 
-router.post("/facturas", facturaController.crearFactura);
+const verificarToken = require("../middleware/authMiddleware");
+const verificarRol = require("../middleware/rolMiddleware");
 
-router.get("/facturas", facturaController.listarFacturas);
+// Crear factura (Admin y Vendedor)
+router.post(
+    "/facturas",
+    verificarToken,
+    verificarRol([1,2]),
+    facturaController.crearFactura
+);
 
-router.get("/facturas/:id", facturaController.obtenerFactura);
+// Listar facturas (solo Admin)
+router.get(
+    "/facturas",
+    verificarToken,
+    verificarRol([1]),
+    facturaController.listarFacturas
+);
 
-router.get("/facturas/:id/detalle", facturaController.obtenerDetalle);
+// Obtener una factura (solo Admin)
+router.get(
+    "/facturas/:id",
+    verificarToken,
+    verificarRol([1]),
+    facturaController.obtenerFactura
+);
+
+// Detalle de factura (solo Admin)
+router.get(
+    "/facturas/:id/detalle",
+    verificarToken,
+    verificarRol([1]),
+    facturaController.obtenerDetalle
+);
 
 module.exports = router;

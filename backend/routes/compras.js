@@ -3,10 +3,31 @@ const router = express.Router();
 
 const compraController = require("../controllers/compraController");
 
-router.post("/compras", compraController.crearCompra);
+const verificarToken = require("../middleware/authMiddleware");
+const verificarRol = require("../middleware/rolMiddleware");
 
-router.get("/compras", compraController.listarCompras);
+// Crear compra (Admin y Bodega)
+router.post(
+    "/compras",
+    verificarToken,
+    verificarRol([1,3]),
+    compraController.crearCompra
+);
 
-router.get("/compras/:id/detalle", compraController.detalleCompra);
+// Listar compras (solo Admin)
+router.get(
+    "/compras",
+    verificarToken,
+    verificarRol([1]),
+    compraController.listarCompras
+);
+
+// Ver detalle de compra (solo Admin)
+router.get(
+    "/compras/:id/detalle",
+    verificarToken,
+    verificarRol([1]),
+    compraController.detalleCompra
+);
 
 module.exports = router;

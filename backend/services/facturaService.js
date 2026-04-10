@@ -118,8 +118,8 @@ const obtenerFacturas = async () => {
             f.Num_Factura,
             f.Fecha_Fact,
             f.Total,
-            c.Nombre AS Cliente,
-            u.Nombre AS Usuario
+            CONCAT(c.client_pri_nom, ' ', c.client_pri_apell) AS Cliente,
+            CONCAT(u.Usu_pri_nomb, ' ', u.Usu_pri_apell) AS Usuario
         FROM Factura f
         JOIN Cliente c 
         ON f.Cliente_Client_id = c.ID_client
